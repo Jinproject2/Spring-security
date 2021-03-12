@@ -53,11 +53,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .expressionHandler(expressionHandler());
         http.formLogin()
             .loginPage("/login")
-            .permitAll()
-        ;
+            .permitAll();
         http.httpBasic();
 
         http.logout().logoutSuccessUrl("/");
+
+        //maximumSessions 설정에 따라 로그인은 한 개의 사용자(브라우저)에서만 가능하게 설정이 가능하며, true일 경우 먼저 로그인한 사용자 우선 false(default) 일 경우 기존 사용자 로그아웃
+        http.sessionManagement()
+                .sessionFixation()
+                    .changeSessionId()
+                .maximumSessions(1)
+                    .maxSessionsPreventsLogin(false);
 
         SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
     }
