@@ -1,5 +1,7 @@
 package me.whiteship.demospringsecurityform.config;
 
+import me.whiteship.demospringsecurityform.account.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -32,6 +34,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    AccountService accountService;
+
     public SecurityExpressionHandler expressionHandler() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
@@ -61,6 +66,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
             .loginPage("/login")
             .permitAll();
+
+        http.rememberMe()
+                .userDetailsService(accountService)
+                .key("remember-me-sample");
+
         http.httpBasic();
 
         http.logout().logoutSuccessUrl("/");
